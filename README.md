@@ -3,6 +3,8 @@
 ### Available algorithms
 * Policy Iteration from MDP
   * policy_iteration
+* Value Iteration from MDP
+  * value_iteration
 
 ### Available Utils
 * policy_utils:
