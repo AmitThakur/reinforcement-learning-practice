@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+
 np.set_printoptions(suppress=True)
 
 random.seed(123)
@@ -23,6 +24,7 @@ def plot_policy(pi, P, n_rows, n_cols, title, action_symbols, start_state, goal_
     n_states = len(P)
     assert (n_rows * n_cols) == n_states
     fig, ax = plt.subplots(figsize=(n_cols * 1.5, n_rows * 1.5))
+    plt.gca().invert_yaxis()
     plt.subplots_adjust(top=0.60)
     plt.tick_params(
         axis='both',  # changes apply to the x-axis
@@ -39,9 +41,9 @@ def plot_policy(pi, P, n_rows, n_cols, title, action_symbols, start_state, goal_
     ax.set_yticks(np.arange(0, n_rows + 1, 1.0))
     plt.title(title)
 
-    for x in range(n_cols):
-        for y in range(n_rows):
-            state_index = int(x+y)
+    for y in range(n_rows):
+        for x in range(n_cols):
+            state_index = int(x + (y * n_cols))
             if state_index == start_state:
                 cell_val = 'S'
             elif state_index == goal_state:
@@ -49,7 +51,8 @@ def plot_policy(pi, P, n_rows, n_cols, title, action_symbols, start_state, goal_
             else:
                 cell_val = action_symbols[pi(state_index)]
 
-            ax.text(x+0.5, y+0.5, f'{cell_val}\n{state_index}', color='purple')
+            ax.text(x + 0.4, y + 0.5, f'{cell_val}', color='blue')
+            ax.text(x + 0.08, y + 0.2, f'{state_index}', color='gray')
 
     plt.show()
 
@@ -67,6 +70,7 @@ def plot_state_value_function(n_rows, n_cols, V, title, precision=5):
     n_states = len(V)
     assert (n_rows * n_cols) == n_states
     fig, ax = plt.subplots(figsize=(n_cols * 1.5, n_rows * 1.5))
+    plt.gca().invert_yaxis()
     plt.subplots_adjust(top=0.60)
     plt.tick_params(
         axis='both',
@@ -83,11 +87,12 @@ def plot_state_value_function(n_rows, n_cols, V, title, precision=5):
     ax.set_yticks(np.arange(0, n_rows + 1, 1.0))
     plt.title(title)
 
-    for x in range(n_cols):
-        for y in range(n_rows):
-            state = int(x+y)
-            val = np.round(V[state], precision)
-            ax.text(x+0.2, y+0.3, f'{state}\n{val}', color='purple')
+    for y in range(n_rows):
+        for x in range(n_cols):
+            state = int(x + (y * n_cols))
+            cell_val = np.round(V[state], precision)
+            ax.text(x + 0.4, y + 0.5, f'{cell_val}', color='blue')
+            ax.text(x + 0.08, y + 0.2, f'{state}', color='gray')
 
     plt.show()
 
