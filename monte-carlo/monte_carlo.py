@@ -44,11 +44,11 @@ def mc_prediction(pi, env, gamma=1.0, init_alpha=0.5, min_alpha=0.01,
 
             # Calculate the length of steps from current to end [t, end]
             n_steps = len(trajectory[t:])
-            # MC Target: G
+            # MC Target: G which is an actual return calculated till end of the trajectory
             G = np.sum(discounts[:n_steps] * trajectory[t:, 2])
             # MC Error
             mc_error = G - V[state]
-            # Using decayed learning rate: alpha
+            # Update V using actual returns till end of the episode
             V[state] = V[state] + alphas[e] * mc_error
 
     return V.copy()

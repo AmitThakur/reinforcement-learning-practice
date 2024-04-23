@@ -1,6 +1,6 @@
 import warnings
 import gym, gym_walk
-from monte_carlo import mc_prediction
+from temporal_difference import td_prediction
 from utils.common_utils import (evaluate_policy, print_policy_success_stats,
                                 plot_state_value_function, plot_policy, rmse)
 warnings.filterwarnings('ignore')
@@ -21,14 +21,13 @@ row, col = 1, 7
 
 V_true = evaluate_policy(pi, P, gamma=gamma)
 plot_state_value_function(row, col, V_true, 'True Value Function')
-plot_policy(pi, P, row, col, 'Initial Policy', action_symbols, init_state, goal_state)
 print_policy_success_stats(env, pi, goal_state=goal_state, gamma=gamma)
 
-V_fv_mc = mc_prediction(pi, env, gamma=gamma, n_episodes=n_episodes, first_visit=False)
-plot_state_value_function(row, col, V_fv_mc, 'EV-MC Value Function')
-plot_state_value_function(row, col, V_fv_mc - V_true, 'Error EV_MC Value Function')
+V_td = td_prediction(pi, env, gamma=gamma, n_episodes=n_episodes)
+plot_state_value_function(row, col, V_td, 'TD Value Function')
+plot_state_value_function(row, col, V_td - V_true, 'Error TD Value Function')
 
-print('RMSE:', rmse(V_fv_mc, V_true))
+print('RMSE:', rmse(V_td, V_true))
 
 
 
