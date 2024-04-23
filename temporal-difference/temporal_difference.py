@@ -5,6 +5,17 @@ from tqdm import tqdm
 
 def td_prediction(pi, env, gamma=1.0, init_alpha=0.5, min_alpha=0.01,
                   alpha_decay_ratio=0.5, n_episodes=500):
+    """
+    Predict value function using temporal difference algorithm
+    :param pi: policy
+    :param env: Environment
+    :param gamma: discount factor
+    :param init_alpha:  Initial learning rate
+    :param min_alpha: Fully decayed learning rate
+    :param alpha_decay_ratio:  In what fraction of steps should decay be completed.
+    :param n_episodes: No of episodes
+    :return: Estimated Value Function using Temporal Difference algorithm
+    """
     # No of possible states
     n_state = env.observation_space.n
 
