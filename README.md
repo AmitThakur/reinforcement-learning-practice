@@ -8,6 +8,7 @@
 * Monte Carlo Prediction
   * First Visit-MC
   * Every Visit-MC
+* Temporal Difference
 
 ### Available Utils
 * common_utils:
