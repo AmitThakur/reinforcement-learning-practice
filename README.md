@@ -1,4 +1,5 @@
 # Reinforcement-Learning-Practice
+Practice code from Reinforcement Learning
 
 ### Available algorithms
 * Policy Iteration from MDP
