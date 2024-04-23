@@ -5,9 +5,12 @@
   * policy_iteration
 * Value Iteration from MDP
   * value_iteration
+* Monte Carlo Prediction
+  * First Visit-MC
+  * Every Visit-MC
 
 ### Available Utils
-* policy_utils:
+* common_utils:
   * plot_policy
   * plot_state_value_function
   * evaluate_policy
@@ -16,3 +19,6 @@
   * mean_return
   * print_policy_success_stats
   * generate_random_policy
+  * rmse
+  * decay_schedule
+  * generate_trajectory
