@@ -10,6 +10,7 @@
   * Every Visit-MC
 * Temporal Difference
 * N-Step Temporal Difference
+* Temporal Difference-Lambda
 
 ### Available Utils
 * common_utils:
