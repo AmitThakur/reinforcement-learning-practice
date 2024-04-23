@@ -9,6 +9,7 @@
   * First Visit-MC
   * Every Visit-MC
 * Temporal Difference
+* N-Step Temporal Difference
 
 ### Available Utils
 * common_utils:
