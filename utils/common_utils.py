@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from itertools import cycle, count
+from prettytable import PrettyTable
 
 np.set_printoptions(suppress=True)
 
@@ -277,3 +278,93 @@ def generate_trajectory(pi, env, max_steps=200):
     return np.array(trajectory, np.dtype(object))
 
 
+def generate_trajectory_epsilon_greedy(select_action, Q, epsilon, env, max_steps=200):
+    """
+    Generate a trajectory (episode) of interaction with env and state transition
+    :param select_action: Action selection function
+    :param Q: Action Value function
+    :param epsilon: Probability of exploration
+    :param env: Environment instance
+    :param max_steps: Maximum steps limit
+    :return: The generated trajectory
+    """
+    done, trajectory = False, []
+    while not done:
+        # New episode
+        state = env.reset()
+        for t in count():
+            action = select_action(state, Q, epsilon)
+            next_state, reward, done, _ = env.step(action)
+            experience = (state, action, reward, next_state, done)
+            trajectory.append(experience)
+            if done:
+                break
+            if t >= max_steps - 1:
+                # Discarding the trajectory that didn't end within max_steps.
+                trajectory = []
+                break
+            state = next_state
+
+    return np.array(trajectory, np.dtype(object))
+
+
+def print_action_value_function(Q, action_symbols):
+    """
+    Prints the action value function Q
+    :param Q: action value function
+    :param action_symbols: Action Symbols array
+    :return: Prints in tabular format
+    """
+    table = PrettyTable()
+    table.field_names = ['state'] + action_symbols
+    for state, entry in enumerate(Q):
+        table.add_row(np.concatenate(([state], entry)))
+    print(table)
+
+
+def get_policy_metrics(env, gamma, pi, goal_state, optimal_Q, n_episodes=100, max_steps=200):
+    """
+    Get policy metrics:
+    :param env:
+    :param gamma:
+    :param pi:
+    :param goal_state:
+    :param optimal_Q:
+    :param n_episodes:
+    :param max_steps:
+    :return:
+    """
+    random.seed(123)
+    np.random.seed(123)
+    reached_goal, episode_reward, episode_regret = [], [], []
+    for _ in range(n_episodes):
+        state, done, steps = env.reset(), False, 0
+        episode_reward.append(0.0)
+        episode_regret.append(0.0)
+        while not done and steps < max_steps:
+            action = pi(state)
+            regret = np.max(optimal_Q[state]) - optimal_Q[state][action]
+            episode_regret[-1] += regret
+
+            state, reward, done, _ = env.step(action)
+            episode_reward[-1] += (gamma ** steps * reward)
+
+            steps += 1
+
+        reached_goal.append(state == goal_state)
+    results = np.array((np.sum(reached_goal) / len(reached_goal) * 100,
+                        np.mean(episode_reward),
+                        np.mean(episode_regret)))
+    return results
+
+
+def moving_average(a, n=100):
+    """
+    Calculate moving average
+    :param a: array
+    :param n: limit
+    :return: Moving average
+    """
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n

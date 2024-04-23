@@ -20,7 +20,7 @@ LEFT, RIGHT = range(2)
 action_symbols = ['<', '>']
 
 # Run value iteration
-optimal_V, optimal_pi = value_iteration(P)
+_, optimal_V, optimal_pi = value_iteration(P)
 plot_policy(optimal_pi, P, row, col, "Optimal Policy", action_symbols, init_state, goal_state)
 print_policy_success_stats(env, optimal_pi, goal_state)
 plot_state_value_function(row, col, optimal_V, "Optimal Value Function")

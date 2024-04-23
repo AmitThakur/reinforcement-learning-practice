@@ -8,7 +8,7 @@ def value_iteration(P, gamma=1.0, theta=1e-10):
     :param P: MDP
     :param gamma: discount factor
     :param theta: Threshold for value function evaluation
-    :return: V, pi
+    :return: Q, V, pi
 
     Usage: V,pi = value_iteration(V, P, gamma=0.99, theta=1e-10)
     """
@@ -30,4 +30,4 @@ def value_iteration(P, gamma=1.0, theta=1e-10):
         V = np.max(Q, axis=1)
 
     pi = lambda s: {s:a for s, a in enumerate(np.argmax(Q, axis=1))}[s]
-    return V, pi
+    return Q, V, pi
