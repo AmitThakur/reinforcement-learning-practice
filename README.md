@@ -25,3 +25,7 @@
   * rmse
   * decay_schedule
   * generate_trajectory
+  * generate_trajectory_epsilon_greedy
+  * print_action_value_function
+  * get_policy_metrics
+  * moving_average
