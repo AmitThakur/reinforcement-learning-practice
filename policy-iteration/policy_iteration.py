@@ -1,4 +1,4 @@
-from utils.policy_utils import evaluate_policy, improve_policy, generate_random_policy
+from utils.common_utils import evaluate_policy, improve_policy, generate_random_policy
 
 
 def policy_iteration(pi, P, gamma=1.0, theta=1e-10):

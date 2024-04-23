@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+from itertools import cycle, count
 
 np.set_printoptions(suppress=True)
 
@@ -167,17 +168,18 @@ def probability_success(env, pi, goal_state, n_episodes=100, max_steps=200):
 
         # only interested in knowing whether we reached the goal or not
         results.append(state == goal_state)
-    return np.mean(results)
+    return np.sum(results) / len(results)
 
 
-def mean_return(env, pi, n_episodes=100, max_steps=200):
+def mean_return(env, pi, n_episodes=100, max_steps=200, gamma=1.0):
     """
     Calculate mean return of all episodes to reach a
-    :param env:
-    :param pi:
-    :param n_episodes:
+    :param env: Environment
+    :param pi: Policy
+    :param n_episodes: No of episodes
     :param max_steps:
-    :return:
+    :param gamma: Discount factor
+    :return: Mean return
     """
     random.seed(123)
     np.random.seed(123)
@@ -188,19 +190,90 @@ def mean_return(env, pi, n_episodes=100, max_steps=200):
         results.append(0.0)
         while not done and steps < max_steps:
             state, reward, done, _ = env.step(pi(state))
-            results[-1] += reward
+            results[-1] += (gamma**steps * reward)
             steps += 1
     return np.mean(results)
 
 
-def print_policy_success_stats(env, pi, goal_state, n_episodes=100, max_steps=200):
+def print_policy_success_stats(env, pi, goal_state, n_episodes=100, max_steps=200, gamma=1.0):
     success_percent = probability_success(env, pi, goal_state, n_episodes, max_steps)
-    return_mean = mean_return(env, pi, n_episodes, max_steps)
+    return_mean = mean_return(env, pi, n_episodes, max_steps, gamma)
     print("By using the Policy, success rate to reach goal is: {:.2f}%".format(success_percent * 100))
-    print("By using the Policy, un-discounted reward is: {:.4f}".format(return_mean))
+    print("By using the Policy, mean reward is: {:.4f}".format(return_mean))
 
 
 def generate_random_policy(P):
+    """
+    Generate a random policy
+    :param P: MDP
+    :return: Generated random policy
+    """
     random_actions = np.random.choice(tuple(P[0].keys()), len(P))
     pi = lambda s: {s: a for s, a in enumerate(random_actions)}[s]
     return pi
+
+
+def rmse(x, y, dp=4):
+    """
+    Calculate root mean square error
+    :param x: First variable
+    :param y: Second variable
+    :param dp: Decimal Places
+    :return: RMSE value
+    """
+    return np.round(np.sqrt(np.mean((x - y)**2)), dp)
+
+
+def decay_schedule(init_value, min_value, decay_ratio, max_steps, log_start=-2, log_base=10):
+    """
+    Generate the decay schedule. More Exploring initially, more exploiting later.
+    :param init_value: Initial value
+    :param min_value: Min value
+    :param decay_ratio: Decay Ration: In what fraction of steps should decay be completed.
+    :param max_steps: Max steps
+    :param log_start: Starting exponent
+    :param log_base: Log base
+    :return: The generated decay schedule
+    """
+    # We'll take decay_steps to decay from init_value down to min_value
+    decay_steps = int(max_steps * decay_ratio)
+    # Leftover steps
+    rem_steps = max_steps - decay_steps
+    # Create a sequence [reversed] of scaling numbers from base^log_start to base^0 (=1), including end points
+    values = np.logspace(log_start, 0, decay_steps, base=log_base, endpoint=True)[::-1]
+    # Normalize them (min-max scaling)
+    values = (values - values.min()) / (values.max() - values.min())
+    # Get the scaled values
+    values = (init_value - min_value) * values + min_value
+    # Pad the sequence with edge numbers to each size with width left(0) and right(rem_steps)
+    values = np.pad(values, (0, rem_steps), 'edge')
+    return values
+
+
+def generate_trajectory(pi, env, max_steps=200):
+    """
+    Generate a trajectory (episode) of interaction with env and state transition
+    :param pi: Policy we use
+    :param env: Environment instance
+    :param max_steps: Maximum steps limit
+    :return: The generated trajectory
+    """
+    done, trajectory = False, []
+    while not done:
+        state = env.reset()
+        for t in count():
+            action = pi(state)
+            next_state, reward, done, _ = env.step(action)
+            experience = (state, action, reward, next_state, done)
+            trajectory.append(experience)
+            if done:
+                break
+            if t >= max_steps - 1:
+                # Discarding the trajectory that didn't end within max_steps.
+                trajectory = []
+                break
+            state = next_state
+
+    return np.array(trajectory, np.dtype(object))
+
+

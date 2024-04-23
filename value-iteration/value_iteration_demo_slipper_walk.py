@@ -1,5 +1,5 @@
 import gym, gym_walk
-from utils.policy_utils import plot_policy, evaluate_policy, plot_state_value_function, \
+from utils.common_utils import plot_policy, evaluate_policy, plot_state_value_function, \
     print_policy_success_stats
 from value_iteration import value_iteration
 
