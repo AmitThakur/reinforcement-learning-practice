@@ -13,6 +13,7 @@ Practice code from Reinforcement Learning
 * N-Step Temporal Difference
 * Temporal Difference-Lambda
 * SARSA
+* Q-Learning
 
 ### Available Utils
 * common_utils:
