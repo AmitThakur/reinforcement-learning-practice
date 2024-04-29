@@ -12,6 +12,7 @@ Practice code from Reinforcement Learning
 * Temporal Difference
 * N-Step Temporal Difference
 * Temporal Difference-Lambda
+* SARSA
 
 ### Available Utils
 * common_utils:
@@ -30,3 +31,4 @@ Practice code from Reinforcement Learning
   * print_action_value_function
   * get_policy_metrics
   * moving_average
+  * choose_epsilon_greedy_action 
