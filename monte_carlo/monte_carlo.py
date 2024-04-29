@@ -26,7 +26,7 @@ def mc_prediction(pi, env, gamma=1.0, init_alpha=0.5, min_alpha=0.01,
     # Pre calculate discount factor sequence
     discounts = np.logspace(0, max_steps, num=max_steps, base=gamma, endpoint=False)
 
-    # Pre-decaying alpha sequence: More Exploring initially, more exploiting later
+    # Pre-decaying alpha sequence: Learning Rate
     alphas = decay_schedule(init_alpha, min_alpha, alpha_decay_ratio, n_episodes)
 
     # Initialize the value function to zero

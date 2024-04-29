@@ -22,7 +22,7 @@ def td_prediction(pi, env, gamma=1.0, init_alpha=0.5, min_alpha=0.01,
     # Initialize the value function to zero
     V = np.zeros(n_state, dtype=np.float64)
 
-    # Pre-decaying alpha sequence: More Exploring initially, more exploiting later
+    # Pre-decaying alpha sequence: Learning Rate
     alphas = decay_schedule(init_alpha, min_alpha, alpha_decay_ratio, n_episodes)
 
     # Run multiple episodes

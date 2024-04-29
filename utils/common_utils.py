@@ -227,7 +227,7 @@ def rmse(x, y, dp=4):
 
 def decay_schedule(init_value, min_value, decay_ratio, max_steps, log_start=-2, log_base=10):
     """
-    Generate the decay schedule. More Exploring initially, more exploiting later.
+    Generate the decay schedule.
     :param init_value: Initial value
     :param min_value: Min value
     :param decay_ratio: Decay Ration: In what fraction of steps should decay be completed.
@@ -308,13 +308,15 @@ def generate_trajectory_epsilon_greedy(select_action, Q, epsilon, env, max_steps
     return np.array(trajectory, np.dtype(object))
 
 
-def print_action_value_function(Q, action_symbols):
+def print_action_value_function(Q, action_symbols, rounding_decimals=3):
     """
     Prints the action value function Q
     :param Q: action value function
     :param action_symbols: Action Symbols array
+    :param rounding_decimals: No of rounding decimals
     :return: Prints in tabular format
     """
+    Q = np.around(Q, rounding_decimals)
     table = PrettyTable()
     table.field_names = ['state'] + action_symbols
     for state, entry in enumerate(Q):
@@ -368,3 +370,20 @@ def moving_average(a, n=100):
     ret = np.cumsum(a, dtype=float)
     ret[n:] = ret[n:] - ret[:-n]
     return ret[n - 1:] / n
+
+
+def choose_epsilon_greedy_action(state, Q, epsilon):
+    """
+    Choose an action based on epsilon-greedy approach.
+    :param state: State
+    :param Q: Action Value function
+    :param epsilon: With a small probability of epsilon, we choose to explore
+    :return:
+    """
+    # The random number is within a epsilon threshold
+    if np.random.random() <= epsilon:
+        # Choose a random action out of the ALL actions
+        return np.random.randint(len(Q[state]))
+    else:
+        # Choose greedily
+        return np.argmax(Q[state])

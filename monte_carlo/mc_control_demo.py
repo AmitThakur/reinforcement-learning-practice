@@ -17,7 +17,7 @@ row, col = 1, 9
 action_symbols = ['<', '>']
 optimal_Q, optimal_V, optimal_pi = value_iteration(P, gamma=gamma)
 plot_state_value_function(row, col, optimal_V, 'Optimal State Value Function')
-optimal_Q = np.around(optimal_Q, 3)
+
 print_action_value_function(optimal_Q, action_symbols)
 success_rate_op, mean_return_op, mean_regret_op = get_policy_metrics(
     env, gamma=gamma, pi=optimal_pi, goal_state=goal_state, optimal_Q=optimal_Q)
