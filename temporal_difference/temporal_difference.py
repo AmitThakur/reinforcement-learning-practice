@@ -10,7 +10,7 @@ def td_prediction(pi, env, gamma=1.0, init_alpha=0.5, min_alpha=0.01,
     :param pi: policy
     :param env: Environment
     :param gamma: discount factor
-    :param init_alpha:  Initial learning rate
+    :param init_alpha: Initial learning rate
     :param min_alpha: Fully decayed learning rate
     :param alpha_decay_ratio:  In what fraction of steps should decay be completed.
     :param n_episodes: No of episodes

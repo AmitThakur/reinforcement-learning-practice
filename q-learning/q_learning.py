@@ -3,13 +3,11 @@ from utils.common_utils import decay_schedule, choose_epsilon_greedy_action
 from tqdm import tqdm
 
 
-def sarsa(env, gamma=1.0, init_alpha=0.5, min_alpha=0.01, alpha_decay_ratio=0.5, init_epsilon=1.0,
+def q_learning(env, gamma=1.0, init_alpha=0.5, min_alpha=0.01, alpha_decay_ratio=0.5, init_epsilon=1.0,
           min_epsilon=0.1, epsilon_decay_ratio=0.9, n_episodes=3000):
     """
-    Solve Control Problem using SARSA.
+    Solve Control Problem using Q-Learning.
 
-    At its core, SARSA is TD with two main characters: First, it evaluates the
-    action-value function Q. Second, it uses an exploratory policy-improvement step
     :param env: Environment
     :param gamma: discount factor
     :param init_alpha: Initial learning rate
@@ -36,21 +34,19 @@ def sarsa(env, gamma=1.0, init_alpha=0.5, min_alpha=0.01, alpha_decay_ratio=0.5,
     for e in tqdm(range(n_episodes), leave=False):
         # Initialize the env
         state, done = env.reset(), False
-        # Choose an epsilon-greedy [initial] action with decaying exploration rate.
-        action = choose_epsilon_greedy_action(state, Q, epsilons[e])
         # We don't compute trajectory here upfront like MC methods. We use TD.
         while not done:
+            # Choose an epsilon-greedy action with decaying exploration rate.
+            action = choose_epsilon_greedy_action(state, Q, epsilons[e])
             # Interact with the env till end
             next_state, reward, done, _ = env.step(action)
-            # Choose an epsilon-greedy action with decaying exploration rate.
-            next_action = choose_epsilon_greedy_action(next_state, Q, epsilons[e])
-            # Compute TD target, which uses Q estimates of next state-action pair.
-            td_target = reward + gamma * Q[next_state][next_action] * (not done)
+            # Compute TD target, which uses Q estimates of next state-(but max valued) action pair.
+            td_target = reward + gamma * Q[next_state].max() * (not done)
             # Compute TD error
             td_error = td_target - Q[state][action]
             # Q estimate update
             Q[state][action] = Q[state][action] + alphas[e] * td_error
-            state, action = next_state, next_action
+            state = next_state
 
     # Greedily choose value function: Max Q value for each state.
     V = np.max(Q, axis=1)
